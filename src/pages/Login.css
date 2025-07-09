@@ -1,0 +1,128 @@
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.login-background {
+  width: 100%;
+  max-width: 400px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  padding: 2px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.login-form-wrapper {
+  background: white;
+  border-radius: 14px;
+  padding: 40px 30px;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.login-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.login-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+}
+
+.login-form {
+  margin-bottom: 30px;
+}
+
+.login-btn {
+  height: 48px;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 10px;
+}
+
+.login-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error-message {
+  background-color: #fff2f0;
+  border: 1px solid #ffccc7;
+  color: #ff4d4f;
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  text-align: center;
+  word-break: break-word;
+}
+
+.field-error {
+  color: #ff4d4f;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.form-input.error {
+  border-color: #ff4d4f;
+}
+
+.form-input.error:focus {
+  border-color: #ff4d4f;
+  box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2);
+}
+
+.form-input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.login-tips {
+  text-align: center;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.login-tips p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.login-tips p:last-child {
+  margin-bottom: 0;
+}
+
+.api-info {
+  font-family: 'Courier New', monospace;
+  font-size: 12px !important;
+  color: #999 !important;
+  word-break: break-all;
+}
+
+/* 移动端适配 */
+@media screen and (max-width: 480px) {
+  .login-container {
+    padding: 10px;
+  }
+  
+  .login-form-wrapper {
+    padding: 30px 20px;
+  }
+  
+  .login-title {
+    font-size: 24px;
+  }
+}
