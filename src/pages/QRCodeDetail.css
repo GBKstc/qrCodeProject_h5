@@ -1,0 +1,272 @@
+.qrcode-detail-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.qrcode-detail-content {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.header {
+  background: #4a90e2;
+  color: white;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.back-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.qr-info {
+  padding: 20px;
+}
+
+.qr-params, .qr-details {
+  margin-bottom: 25px;
+}
+
+.qr-params h3, .qr-details h3 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+  border-bottom: 2px solid #4a90e2;
+  padding-bottom: 8px;
+}
+
+.param-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.param-item:last-child {
+  border-bottom: none;
+}
+
+.param-label {
+  font-weight: 500;
+  color: #666;
+  min-width: 100px;
+}
+
+.param-value {
+  color: #333;
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.detail-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid #4a90e2;
+}
+
+.detail-label {
+  font-weight: 500;
+  color: #666;
+  min-width: 100px;
+}
+
+.detail-value {
+  color: #333;
+  font-weight: 500;
+  text-align: right;
+  word-break: break-all;
+}
+
+.jump-section {
+  margin-top: 25px;
+  padding: 20px;
+  background: #e8f4fd;
+  border-radius: 8px;
+  border: 1px solid #4a90e2;
+}
+
+.jump-section h3 {
+  margin: 0 0 15px 0;
+  color: #4a90e2;
+  border-bottom: 2px solid #4a90e2;
+}
+
+.url-info {
+  text-align: center;
+}
+
+.url-text {
+  color: #4a90e2;
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.auto-jump-notice {
+  color: #ff6b35;
+  font-weight: 500;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.manual-jump-btn {
+  background: #4a90e2;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+.manual-jump-btn:hover {
+  background: #357abd;
+}
+
+/* 加载状态 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: white;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 错误状态 */
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+.error-icon {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
+.error-container h3 {
+  margin: 0 0 10px 0;
+  font-size: 20px;
+}
+
+.error-container p {
+  margin: 0 0 20px 0;
+  opacity: 0.9;
+}
+
+.error-actions {
+  display: flex;
+  gap: 15px;
+}
+
+.retry-btn, .back-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: opacity 0.3s;
+}
+
+.retry-btn {
+  background: #4a90e2;
+  color: white;
+}
+
+.back-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.retry-btn:hover, .back-btn:hover {
+  opacity: 0.8;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .qrcode-detail-container {
+    padding: 10px;
+  }
+  
+  .header {
+    padding: 15px;
+  }
+  
+  .qr-info {
+    padding: 15px;
+  }
+  
+  .param-item, .detail-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  
+  .param-label, .detail-label {
+    min-width: auto;
+  }
+  
+  .detail-value {
+    text-align: left;
+  }
+}

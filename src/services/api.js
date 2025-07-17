@@ -32,6 +32,7 @@ api.interceptors.request.use(
 );
 
 // 响应拦截器
+// 响应拦截器
 api.interceptors.response.use(
   (response) => {
     console.log('收到响应:', response.status, response.config.url);
@@ -46,7 +47,13 @@ api.interceptors.response.use(
       switch (status) {
         case 401:
           console.error('未授权，请重新登录');
-          // 可以在这里处理登录过期逻辑
+          // 清除本地存储的登录信息
+          localStorage.removeItem('isLoggedIn');
+          localStorage.removeItem('userInfo');
+          localStorage.removeItem('selectionData');
+          
+          // 跳转到登录页面
+          window.location.href = '/login';
           break;
         case 403:
           console.error('禁止访问');
@@ -106,6 +113,7 @@ export const processAPI = {
     const defaultParams = {
       currPage: 1,
       pageSize: 999,
+      type:1,//喷码机
       ...params
     };
     
@@ -131,6 +139,18 @@ export const scanAPI = {
     });
   },
   
+  // 根据二维码ID获取展示详情
+  getByQrCode: (qrcodeId) => {
+    return api.get('/daciProduce/getByQrCode', {
+      params: { qrcodeId }
+    });
+  },
+  
+  // 获取展示设定配置
+  getShowConfig: () => {
+    return api.get('/daciProduceShow/pageList');
+  },
+  
   // 提交扫码结果（保留原有接口）
   submitScanResult: (data) => {
     return api.post('/scan/submit', data);
@@ -139,6 +159,16 @@ export const scanAPI = {
   // 获取扫码历史
   getScanHistory: (userId) => {
     return api.get(`/scan/history/${userId}`);
+  }
+};
+
+// 二维码相关API
+export const qrcodeAPI = {
+  // 获取二维码详情
+  getDetail: (infoId) => {
+    return api.get('/daciQrcode/getInfo', {
+      params: { infoId }
+    });
   }
 };
 

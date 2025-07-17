@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login';
 import ProcessSelection from './pages/ProcessSelection';
 import Scanner from './pages/Scanner';
+import QRCodeDetail from './pages/QRCodeDetail';
+import ProductDetail from './pages/ProductDetail';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -28,6 +30,8 @@ function App() {
               </ProtectedRoute>
             } 
           />
+          <Route path="/qrcode" element={<QRCodeDetail />} />
+          <Route path="/product-detail" element={<ProductDetail />} />
         </Routes>
       </div>
     </Router>

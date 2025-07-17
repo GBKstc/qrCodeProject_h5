@@ -358,8 +358,10 @@ const ProcessSelection = () => {
   // 获取设备类型文本
   const getDeviceTypeText = (type) => {
     switch (type) {
-      case 1:
+      case 0:
         return '喷码机';
+      case 1:
+        return 'PDA';
       default:
         return '其他设备';
     }
@@ -402,7 +404,7 @@ const ProcessSelection = () => {
                     <option value="">请选择工序</option>
                     {options.processes.map(process => (
                       <option key={process.id} value={process.id}>
-                        {process.name} {process.descript ? `(${process.descript})` : ''}
+                        {process.name}
                       </option>
                     ))}
                   </select>
@@ -426,7 +428,7 @@ const ProcessSelection = () => {
                         value={device.id}
                         disabled={device.status === 0}
                       >
-                        {device.name} ({device.code}) - {getDeviceTypeText(device.type)} - {getDeviceStatusText(device.status)}
+                        {device.name} ({device.code}) - {getDeviceTypeText(device.type)} 
                       </option>
                     ))}
                   </select>
@@ -436,17 +438,17 @@ const ProcessSelection = () => {
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">选择批次 *</label>
+                  <label className="form-label">选择产品 *</label>
                   <select 
                     name="batch"
                     className={`form-select ${errors.batch ? 'error' : ''}`}
                     value={formData.batch}
                     onChange={handleInputChange}
                   >
-                    <option value="">请选择批次</option>
+                    <option value="">请选择产品</option>
                     {options.batches.map(batch => (
                       <option key={batch.id} value={batch.id}>
-                        批次: {batch.size}
+                        产品: {batch.size}
                       </option>
                     ))}
                   </select>
@@ -456,7 +458,7 @@ const ProcessSelection = () => {
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">选择产品 *</label>
+                  <label className="form-label">选择批次 *</label>
                   <select 
                     name="product"
                     className={`form-select ${errors.product ? 'error' : ''}`}
@@ -464,7 +466,7 @@ const ProcessSelection = () => {
                     onChange={handleInputChange}
                     disabled={!formData.batch}
                   >
-                    <option value="">{!formData.batch ? '请先选择批次' : '请选择产品'}</option>
+                    <option value="">{!formData.batch ? '请先选择产品' : '请选择批次'}</option>
                     {options.products.map(product => (
                       <option key={product.id} value={product.id}>
                         {product.thumbCode} - {product.colour} - {product.batchCode}
