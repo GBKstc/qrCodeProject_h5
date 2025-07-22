@@ -113,7 +113,7 @@ export const processAPI = {
     const defaultParams = {
       currPage: 1,
       pageSize: 999,
-      type:1,//喷码机
+      type:2,//pda设备
       ...params
     };
     

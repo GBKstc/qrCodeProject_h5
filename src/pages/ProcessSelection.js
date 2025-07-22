@@ -426,7 +426,7 @@ const ProcessSelection = () => {
                       <option 
                         key={device.id} 
                         value={device.id}
-                        disabled={device.status === 0}
+                        // disabled={device.status === 1}
                       >
                         {device.name} ({device.code}) - {getDeviceTypeText(device.type)} 
                       </option>
@@ -469,7 +469,8 @@ const ProcessSelection = () => {
                     <option value="">{!formData.batch ? '请先选择产品' : '请选择批次'}</option>
                     {options.products.map(product => (
                       <option key={product.id} value={product.id}>
-                        {product.thumbCode} - {product.colour} - {product.batchCode}
+                        {/* {product.thumbCode} - {product.colour} - {product.batchCode} */}
+                        {product.batchCode}
                       </option>
                     ))}
                   </select>

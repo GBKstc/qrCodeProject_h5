@@ -169,10 +169,10 @@ const Login = () => {
             </button>
           </form>
           
-          <div className="login-tips">
+          {/* <div className="login-tips">
             <p>请使用您的系统账户登录</p>
             <p className="api-info">API地址: http://175.24.15.119:10019</p>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

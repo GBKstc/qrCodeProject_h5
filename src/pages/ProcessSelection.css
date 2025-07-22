@@ -68,8 +68,57 @@
   background-color: #f5f5f5;
 }
 
-/* 移动端适配 */
+/* 移动端选择框优化 */
+@media screen and (max-width: 768px) {
+  .form-select {
+    /* 增加字体大小防止iOS缩放 */
+    font-size: 16px;
+    /* 调整内边距 */
+    padding: 14px 40px 14px 16px;
+    /* 增加行高 */
+    line-height: 1.4;
+  }
+  
+  /* 选择框选项样式优化 */
+  .form-select option {
+    padding: 12px 16px;
+    font-size: 16px;
+    line-height: 1.4;
+    /* 确保选项有足够的点击区域 */
+    min-height: 44px;
+  }
+}
+
+/* 针对小屏幕的额外优化 */
 @media screen and (max-width: 480px) {
+  .form-select {
+    /* 进一步增加内边距 */
+    padding: 16px 40px 16px 18px;
+    /* 增加最小高度 */
+    min-height: 50px;
+    /* 调整背景图标位置 */
+    background-position: right 16px center;
+  }
+  
+  .form-select option {
+    padding: 14px 18px;
+    /* 增加选项的最小高度 */
+    min-height: 48px;
+  }
+  
+  /* 表单组间距调整 */
+  .form-group {
+    margin-bottom: 24px;
+  }
+  
+  /* 标签样式调整 */
+  .form-label {
+    font-size: 15px;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  
+  /* 头部样式 */
   .header-actions {
     flex-direction: column;
     gap: 4px;
@@ -85,7 +134,6 @@
     padding: 4px 8px;
   }
 }
-
 
 .loading-container {
   display: flex;
