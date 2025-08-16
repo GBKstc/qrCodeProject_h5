@@ -13,6 +13,8 @@ const ProductDetail = () => {
   
   // 从URL参数获取qrcodeId
   const qrcodeId = searchParams.get('qrcodeId');
+  const qrcode = searchParams.get('qrcode');
+
 
   useEffect(() => {
     if (!qrcodeId) {
@@ -60,7 +62,9 @@ const ProductDetail = () => {
   };
 
   const handleBack = () => {
-    navigate(-1);
+    // navigate(-1);
+    //https://www.insulators.cn
+    window.location.href = 'https://www.insulators.cn';
   };
 
   const formatDateTime = (dateTimeStr) => {
@@ -100,7 +104,7 @@ const ProductDetail = () => {
     },
     'batchCode': {
       label: '批次',
-      getValue: (data) => data.batchCode,
+      getValue: (data) => data.shareBatchCode,
       render: (value) => value || '-'
     },
     // 'qrcodeCode': {
@@ -186,6 +190,19 @@ const ProductDetail = () => {
           </button>
           <h2>产品详情</h2>
         </div>
+
+        {/* 产品名称和追溯防伪码 */}
+        {productData && (
+          <div className="product-header-info">
+            <div className="product-name-section">
+              <h3 className="product-name">{productData.name || '未知产品'}</h3>
+            </div>
+            <div className="qrcode-info-section">
+              <div className="qrcode-label">追溯防伪码:</div>
+              <div className="qrcode-number">{qrcode}</div>
+            </div>
+          </div>
+        )}
 
         {productData && (
           <div className="product-info">

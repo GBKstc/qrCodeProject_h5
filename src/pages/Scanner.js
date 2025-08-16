@@ -1,16 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Html5Qrcode } from 'html5-qrcode';
 import { scanAPI } from '../services/api';
+import { useToast } from '../components/Toast';
 import './Scanner.css';
 
 const Scanner = () => {
   const navigate = useNavigate();
   const [scannedCode, setScannedCode] = useState('');
-  const [manualInput, setManualInput] = useState('http://175.24.15.119:91/qrcode?qrid=7&qrcode=7WTN0');
+  const [manualInput, setManualInput] = useState('');
   const [selectionData, setSelectionData] = useState(null);
   const [scanHistory, setScanHistory] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { showSuccess, showError, showWarning, showInfo, ToastContainer } = useToast();
 
   // 添加useEffect来获取保存的选择数据
   useEffect(() => {
@@ -59,12 +60,12 @@ const Scanner = () => {
 
   const handleManualSubmit = async () => {
     if (!manualInput.trim()) {
-      alert('请输入二维码内容');
+      showWarning('请输入二维码内容');
       return;
     }
     
     if (!selectionData) {
-      alert('选择数据丢失，请重新选择工序信息');
+      showError('选择数据丢失，请重新选择工序信息');
       navigate('/process-selection');
       return;
     }
@@ -107,28 +108,22 @@ const Scanner = () => {
         setScannedCode(manualInput.trim());
         addToHistory(manualInput.trim(), '手动输入');
         setManualInput('');
-        // alert('提交成功！');
+        showSuccess('提交成功！');
       } else {
-        alert(response.data.message || '提交失败，请重试');
+        showError(response.data.message || '提交失败，请重试');
       }
       
     } catch (error) {
       console.error('提交失败:', error);
-      alert('提交失败，请检查网络连接或稍后重试');
+      showError('提交失败，请检查网络连接或稍后重试');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const goBack = () => {
-    navigate('/process-selection');
-  };
-
   const clearHistory = () => {
-    if (window.confirm('确定要清空扫码历史吗？')) {
-      setScanHistory([]);
-      localStorage.removeItem('scanHistory');
-    }
+    localStorage.removeItem('scanHistory');
+    setScanHistory([]);
   };
 
   const copyToClipboard = (text) => {
@@ -155,6 +150,7 @@ const Scanner = () => {
 
   return (
     <div className="page-container">
+      <ToastContainer />
       <div className="page-content">
         <div className="card mb-20">
           <div className="card-header">

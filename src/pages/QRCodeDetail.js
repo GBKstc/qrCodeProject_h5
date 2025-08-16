@@ -91,7 +91,8 @@ const QRCodeDetail = () => {
       const fullUrl = hasProtocol ? url : `https://${url}`;
       //如果是 /product-detail 产品详情展示地址，需要跳转到产品详情页 参数qrcodeId 
       if(fullUrl.indexOf('/product-detail') !== -1){
-        window.location.href = '/product-detail?qrcodeId=' + qrid;
+        window.location.href = '/product-detail?qrcodeId=' + qrid + '&qrcode=' + qrcode;
+
         return;
       }
       // 跳转到目标地址

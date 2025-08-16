@@ -261,10 +261,31 @@ const ProcessSelection = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    
+    // 如果是工序选择变化，需要检查是否需要清空产品选择
+    if (name === 'process') {
+      const selectedProcess = options.processes.find(p => p.id == value);
+      const processName = selectedProcess ? selectedProcess.name : '';
+      // 如果选择的是非上釉和胶装工序，清空产品和批次选择
+      if (processName.includes('上釉') || processName.includes('胶装')) {
+        setFormData(prev => ({
+          ...prev,
+          [name]: value,
+          batch: '',
+          product: ''
+        }));
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          [name]: value
+        }));
+      }
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
     
     // 清除对应字段的错误信息
     if (errors[name]) {
@@ -280,8 +301,12 @@ const ProcessSelection = () => {
     
     if (!formData.process) newErrors.process = '请选择工序';
     if (!formData.device) newErrors.device = '请选择设备';
-    if (!formData.batch) newErrors.batch = '请选择批次';
-    if (!formData.product) newErrors.product = '请选择产品';
+    
+    // 只有在需要显示产品选择时才验证产品和批次
+    if (shouldShowProductSelection()) {
+      if (!formData.batch) newErrors.batch = '请选择产品';
+      if (!formData.product) newErrors.product = '请选择批次';
+    }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -295,14 +320,19 @@ const ProcessSelection = () => {
     setLoading(true);
     
     try {
-      // 模拟API调用
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
+
       // 构建完整的选择数据
-      const selectedProcess = options.processes.find(p => p.id === formData.process);
-      const selectedDevice = options.devices.find(d => d.id === formData.device);
-      const selectedBatch = options.batches.find(b => b.id === formData.batch);
-      const selectedProduct = options.products.find(p => p.id === parseInt(formData.product));
+      const selectedProcess = options.processes.find(p => p.id == formData.process);
+      const selectedDevice = options.devices.find(d => d.id == formData.device);
+      
+      // 只有在需要显示产品选择时才获取产品和批次数据
+      let selectedBatch = null;
+      let selectedProduct = null;
+      
+      if (shouldShowProductSelection()) {
+        selectedBatch = options.batches.find(b => b.id == formData.batch);
+        selectedProduct = options.products.find(p => p.id == parseInt(formData.product));
+      }
       
       const selectionData = {
         process: selectedProcess,
@@ -358,13 +388,25 @@ const ProcessSelection = () => {
   // 获取设备类型文本
   const getDeviceTypeText = (type) => {
     switch (type) {
-      case 0:
-        return '喷码机';
       case 1:
+        return '喷码机';
+      case 2:
         return 'PDA';
       default:
         return '其他设备';
     }
+  };
+
+  // 判断是否需要显示产品选择（非上釉和胶装工序不显示产品选择）
+  const shouldShowProductSelection = () => {
+    if (!formData.process) return false;
+    
+    const selectedProcess = options.processes.find(p => p.id == formData.process);
+    if (!selectedProcess) return false;
+    
+    const processName = selectedProcess.name;
+    // 如果工序名称包含"上釉"或"胶装"，则不显示产品选择
+    return (processName.includes('上釉') || processName.includes('胶装'));
   };
 
   return (
@@ -437,47 +479,51 @@ const ProcessSelection = () => {
                   )}
                 </div>
 
-                <div className="form-group">
-                  <label className="form-label">选择产品 *</label>
-                  <select 
-                    name="batch"
-                    className={`form-select ${errors.batch ? 'error' : ''}`}
-                    value={formData.batch}
-                    onChange={handleInputChange}
-                  >
-                    <option value="">请选择产品</option>
-                    {options.batches.map(batch => (
-                      <option key={batch.id} value={batch.id}>
-                        产品: {batch.size}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.batch && (
-                    <div className="field-error">{errors.batch}</div>
-                  )}
-                </div>
+                {shouldShowProductSelection() && (
+                  <>
+                    <div className="form-group">
+                      <label className="form-label">选择产品 *</label>
+                      <select 
+                        name="batch"
+                        className={`form-select ${errors.batch ? 'error' : ''}`}
+                        value={formData.batch}
+                        onChange={handleInputChange}
+                      >
+                        <option value="">请选择产品</option>
+                        {options.batches.map(batch => (
+                          <option key={batch.id} value={batch.id}>
+                            产品: {batch.size}
+                          </option>
+                        ))}
+                      </select>
+                      {errors.batch && (
+                        <div className="field-error">{errors.batch}</div>
+                      )}
+                    </div>
 
-                <div className="form-group">
-                  <label className="form-label">选择批次 *</label>
-                  <select 
-                    name="product"
-                    className={`form-select ${errors.product ? 'error' : ''}`}
-                    value={formData.product}
-                    onChange={handleInputChange}
-                    disabled={!formData.batch}
-                  >
-                    <option value="">{!formData.batch ? '请先选择产品' : '请选择批次'}</option>
-                    {options.products.map(product => (
-                      <option key={product.id} value={product.id}>
-                        {/* {product.thumbCode} - {product.colour} - {product.batchCode} */}
-                        {product.batchCode}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.product && (
-                    <div className="field-error">{errors.product}</div>
-                  )}
-                </div>
+                    <div className="form-group">
+                      <label className="form-label">选择批次 *</label>
+                      <select 
+                        name="product"
+                        className={`form-select ${errors.product ? 'error' : ''}`}
+                        value={formData.product}
+                        onChange={handleInputChange}
+                        disabled={!formData.batch}
+                      >
+                        <option value="">{!formData.batch ? '请先选择产品' : '请选择批次'}</option>
+                        {options.products.map(product => (
+                          <option key={product.id} value={product.id}>
+                            {/* {product.thumbCode} - {product.colour} - {product.batchCode} */}
+                            {product.batchCode}
+                          </option>
+                        ))}
+                      </select>
+                      {errors.product && (
+                        <div className="field-error">{errors.product}</div>
+                      )}
+                    </div>
+                  </>
+                )}
 
                 <button 
                   className="btn btn-primary btn-block submit-btn"
