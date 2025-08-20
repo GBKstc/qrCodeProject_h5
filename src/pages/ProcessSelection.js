@@ -455,7 +455,7 @@ const ProcessSelection = () => {
                   )}
                 </div>
 
-                <div className="form-group">
+                {/* <div className="form-group">
                   <label className="form-label">选择设备 *</label>
                   <select 
                     name="device"
@@ -477,7 +477,7 @@ const ProcessSelection = () => {
                   {errors.device && (
                     <div className="field-error">{errors.device}</div>
                   )}
-                </div>
+                </div> */}
 
                 {shouldShowProductSelection() && (
                   <>

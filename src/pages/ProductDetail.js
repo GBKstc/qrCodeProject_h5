@@ -87,21 +87,21 @@ const ProductDetail = () => {
     //     </div>
     //   ) : '-'
     // },
-    'trademark': {
-      label: '商标',
-      getValue: (data) => data.trademark,
-      render: (value) => value ? (
-        <img 
-          src={value} 
-          alt="商标" 
-          className="trademark-image"
-          onError={(e) => {
-            e.target.style.display = 'none';
-            e.target.nextSibling.style.display = 'inline';
-          }}
-        />
-      ) : '-'
-    },
+    // 'trademark': {
+    //   label: '商标',
+    //   getValue: (data) => data.trademark,
+    //   render: (value) => value ? (
+    //     <img 
+    //       src={value} 
+    //       alt="商标" 
+    //       className="trademark-image"
+    //       onError={(e) => {
+    //         e.target.style.display = 'none';
+    //         e.target.nextSibling.style.display = 'inline';
+    //       }}
+    //     />
+    //   ) : '-'
+    // },
     'batchCode': {
       label: '批次',
       getValue: (data) => data.shareBatchCode,
@@ -184,73 +184,146 @@ const ProductDetail = () => {
   return (
     <div className="product-detail-container">
       <div className="product-detail-content">
-        <div className="header">
-          <button onClick={handleBack} className="back-button">
-            ← 返回
-          </button>
-          <h2>产品详情</h2>
+        {/* 海报风格头部 */}
+        <div className="poster-header">
+          <div className="header-background">
+            <div className="header-overlay"></div>
+            <div className="header-content">
+              <button className="back-button" onClick={handleBack}>
+                <span className="back-icon">←</span>
+                <span>返回</span>
+              </button>
+              <div className="header-title">
+                <h1 className="main-title">产品详情</h1>
+                <div className="title-decoration"></div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* 产品名称和追溯防伪码 */}
+        {/* 海报风格产品展示区 */}
         {productData && (
-          <div className="product-header-info">
-            <div className="product-name-section">
-              <h3 className="product-name">{productData.name || '未知产品'}</h3>
-            </div>
-            <div className="qrcode-info-section">
-              <div className="qrcode-label">追溯防伪码:</div>
-              <div className="qrcode-number">{qrcode}</div>
+          <div className="poster-hero-section">
+            <div className="hero-background">
+              <div className="hero-pattern"></div>
+              <div className="hero-content">
+                <div className="product-showcase">
+                  <div className="product-badge">PREMIUM</div>
+                  <h1 className="hero-product-name">{productData.productName || '未知产品'}</h1>
+                  <div className="product-tagline">正品保证 · 品质之选</div>
+                  
+                  <div className="qr-hero-section">
+                    <div className="qr-label-container">
+                      <span className="qr-label">追溯防伪码</span>
+                      <div className="qr-decoration"></div>
+                    </div>
+                    <div className="qr-code-display">
+                      <span className="qr-number">{qrcode}</span>
+                      <div className="qr-glow"></div>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* 产品缩略图海报展示 */}
+                {productData.productThumb && (
+                  <div className="hero-image-section">
+                    <div className="image-frame">
+                      <img 
+                        src={productData.productThumb} 
+                        alt="产品展示" 
+                        className="hero-product-image"
+                      />
+                      <div className="image-overlay">
+                        <span className="image-label">PRODUCT</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
 
         {productData && (
           <div className="product-info">
-            {/* 动态显示配置的字段 */}
-            <div className="display-section">
-              <div className="display-grid">
-                {renderConfiguredFields()}
+            {/* 海报风格信息展示区 */}
+            <div className="poster-info-section">
+              <div className="info-container">
+                <div className="section-title-container">
+                  <h2 className="section-title">产品信息</h2>
+                  <div className="title-underline"></div>
+                </div>
+                
+                <div className="info-cards-grid">
+                  {renderConfiguredFields().map((field, index) => (
+                    <div key={index} className="info-card">
+                      <div className="card-header">
+                        <div className="card-icon"></div>
+                        <span className="card-label">{field.props.children[0].props.children}</span>
+                      </div>
+                      <div className="card-content">
+                        <span className="card-value">{field.props.children[1].props.children}</span>
+                      </div>
+                      <div className="card-decoration"></div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
-            {/* 产品缩略图 */}
-            {productData.productThumb && (
-              <div className="product-thumb-section">
-                <div className="product-thumb">
-                  <img src={productData.productThumb} alt="产品缩略图" />
-                </div>
-              </div>
-            )}
-
-            {/* 生产记录 */}
+            {/* 海报风格生产记录区 */}
             {productData.produceUserList && productData.produceUserList.length > 0 && (
-              <div className="info-section">
-                <h3>生产记录 ({productData.produceUserList.length}条)</h3>
-                <div className="user-list">
-                  {productData.produceUserList.map((user, index) => (
-                    <div key={user.id || index} className="user-item">
-                      <div className="user-header">
-                        <span className="user-name">{user.operateName || '未知操作员'}</span>
-                        <span className="user-process">{user.productionProcessesName || '-'}</span>
-                      </div>
-                      <div className="user-details">
-                        <div className="user-detail">
-                          <span>操作员ID: {user.operateId || '-'}</span>
-                        </div>
-                        <div className="user-detail">
-                          <span>工序ID: {user.productionProcessesId || '-'}</span>
-                        </div>
-                        <div className="user-detail">
-                          <span>创建时间: {formatDateTime(user.createTime)}</span>
-                        </div>
-                        {/* {user.remark && (
-                          <div className="user-detail">
-                            <span>备注: {user.remark}</span>
-                          </div>
-                        )} */}
-                      </div>
+              <div className="poster-records-section">
+                <div className="records-container">
+                  <div className="records-header">
+                    <div className="records-title-container">
+                      <h2 className="records-title">生产记录</h2>
+                      <div className="records-subtitle">Production Records</div>
                     </div>
-                  ))}
+                    <div className="records-count">
+                      <span className="count-number">{productData.produceUserList.length}</span>
+                      <span className="count-label">条记录</span>
+                    </div>
+                  </div>
+                  
+                  <div className="records-timeline">
+                    {productData.produceUserList.map((user, index) => (
+                      <div key={user.id || index} className="timeline-item">
+                        <div className="timeline-marker">
+                          <div className="marker-dot"></div>
+                          <div className="marker-line"></div>
+                        </div>
+                        
+                        <div className="timeline-content">
+                          <div className="record-card">
+                            <div className="record-header">
+                              <div className="user-avatar">
+                                <span className="avatar-text">{(user.operateName || '未知操作员').charAt(0)}</span>
+                              </div>
+                              <div className="user-info">
+                                <h3 className="user-name">{user.operateName || '未知操作员'}</h3>
+                                <p className="user-id">ID: {user.operateId || '-'}</p>
+                              </div>
+                              <div className="process-badge">
+                                <span className="process-name">{user.productionProcessesName || '-'}</span>
+                              </div>
+                            </div>
+                            
+                            <div className="record-details">
+                              <div className="detail-row">
+                                <span className="detail-label">工序ID</span>
+                                <span className="detail-value">{user.productionProcessesId || '-'}</span>
+                              </div>
+                              <div className="detail-row">
+                                <span className="detail-label">创建时间</span>
+                                <span className="detail-value">{formatDateTime(user.createTime)}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             )}

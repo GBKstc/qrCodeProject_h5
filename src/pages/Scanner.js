@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { scanAPI } from '../services/api';
 import { useToast } from '../components/Toast';
@@ -12,6 +12,7 @@ const Scanner = () => {
   const [scanHistory, setScanHistory] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { showSuccess, showError, showWarning, showInfo, ToastContainer } = useToast();
+  const inputRef = useRef(null);
 
   // 添加useEffect来获取保存的选择数据
   useEffect(() => {
@@ -44,8 +45,36 @@ const Scanner = () => {
     }
   }, [navigate]);
 
+  // 自动获取焦点
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
+
+  // 监听键盘事件，支持左右键触发确认输入
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      //弹窗提示
+      showInfo(`点击的按键是：${event.key}`);
+      // 检测左键或右键
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        event.preventDefault();
+        handleManualSubmit();
+      }
+    };
+
+    // 添加事件监听器
+    document.addEventListener('keydown', handleKeyDown);
+
+    // 清理函数
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [manualInput, selectionData, isSubmitting]); // 依赖项确保函数能访问最新状态
+
   // 添加历史记录到localStorage的函数
-  const addToHistory = (code, method = '手动输入') => {
+  const addToHistory = (code, method = '二维码详情') => {
     const newRecord = {
       id: Date.now(),
       code,
@@ -93,7 +122,7 @@ const Scanner = () => {
       }
       
       const requestData = {
-        deviceId: selectionData.device?.id || 0,
+        // deviceId: selectionData.device?.id || 0,
         productId: selectionData.product?.id || 0,
         productionProcessesId: selectionData.process?.id || 0,
         qrcodeId: qrcodeId
@@ -106,7 +135,7 @@ const Scanner = () => {
       
       if (response.data.success) {
         setScannedCode(manualInput.trim());
-        addToHistory(manualInput.trim(), '手动输入');
+        addToHistory(manualInput.trim(), '二维码详情');
         setManualInput('');
         showSuccess('提交成功！');
       } else {
@@ -154,12 +183,13 @@ const Scanner = () => {
       <div className="page-content">
         <div className="card mb-20">
           <div className="card-header">
-            <h3>手动输入</h3>
+            <h3>二维码详情</h3>
           </div>
           <div className="card-body">
             <div className="input-group">
               <input
                 // defaultValue={'http://175.24.15.119:91/qrcode?qrid=7&qrcode=7WTN0'}
+                ref={inputRef}
                 type="text"
                 className="form-input"
                 value={manualInput}
