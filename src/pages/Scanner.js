@@ -55,10 +55,8 @@ const Scanner = () => {
   // 监听键盘事件，支持左右键触发确认输入
   useEffect(() => {
     const handleKeyDown = (event) => {
-      //弹窗提示
-      showInfo(`点击的按键是：${event.key}`);
       // 检测左键或右键
-      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      if (event.key === 'Unidentified') {
         event.preventDefault();
         handleManualSubmit();
       }
