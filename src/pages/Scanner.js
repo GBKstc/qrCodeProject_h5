@@ -102,7 +102,7 @@ const Scanner = () => {
     try {
       // 解析URL中的qrcodeId参数
       let qrcodeId = 0;
-      const input = manualInput.trim();
+      const input = inputValue.trim();
       
       // 检查是否是URL格式
       if (input.includes('qrcodeId=')) {
@@ -133,8 +133,8 @@ const Scanner = () => {
       const response = await scanAPI.take(requestData);
       
       if (response.data.success) {
-        setScannedCode(manualInput.trim());
-        addToHistory(manualInput.trim(), '二维码详情');
+        setScannedCode(inputValue.trim());
+        addToHistory(inputValue.trim(), '二维码详情');
         setManualInput('');
         showSuccess('提交成功！');
       } else {
