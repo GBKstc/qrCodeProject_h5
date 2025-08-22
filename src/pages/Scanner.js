@@ -53,23 +53,23 @@ const Scanner = () => {
   }, []);
 
   // 监听键盘事件，支持左右键触发确认输入
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      // 检测左键或右键
-      if (event.key === 'Unidentified') {
-        event.preventDefault();
-        handleManualSubmit();
-      }
-    };
+  // useEffect(() => {
+  //   const handleKeyDown = (event) => {
+  //     // 检测左键或右键
+  //     if (event.key === 'Unidentified') {
+  //       event.preventDefault();
+  //       handleManualSubmit();
+  //     }
+  //   };
 
-    // 添加事件监听器
-    document.addEventListener('keydown', handleKeyDown);
+  //   // 添加事件监听器
+  //   document.addEventListener('keydown', handleKeyDown);
 
-    // 清理函数
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [manualInput, selectionData, isSubmitting]); // 依赖项确保函数能访问最新状态
+  //   // 清理函数
+  //   return () => {
+  //     document.removeEventListener('keydown', handleKeyDown);
+  //   };
+  // }, [manualInput, selectionData, isSubmitting]); // 依赖项确保函数能访问最新状态
 
   // 添加历史记录到localStorage的函数
   const addToHistory = (code, method = '二维码详情') => {
@@ -85,8 +85,9 @@ const Scanner = () => {
     localStorage.setItem('scanHistory', JSON.stringify(updatedHistory));
   };
 
-  const handleManualSubmit = async () => {
-    if (!manualInput.trim()) {
+  const handleManualSubmit = async (inputValue) => {
+
+    if (!inputValue.trim()) {
       showWarning('请输入二维码内容');
       return;
     }
@@ -99,20 +100,20 @@ const Scanner = () => {
     
     setIsSubmitting(true);
     try {
-      // 解析URL中的qrid参数
+      // 解析URL中的qrcodeId参数
       let qrcodeId = 0;
       const input = manualInput.trim();
       
       // 检查是否是URL格式
-      if (input.includes('qrid=')) {
+      if (input.includes('qrcodeId=')) {
         try {
           const url = new URL(input);
-          const qridParam = url.searchParams.get('qrid');
-          qrcodeId = parseInt(qridParam) || 0;
+          const qrcodeIdParam = url.searchParams.get('qrcodeId');
+          qrcodeId = parseInt(qrcodeIdParam) || 0;
         } catch (urlError) {
           // 如果URL解析失败，尝试正则表达式提取
-          const qridMatch = input.match(/qrid=(\d+)/);
-          qrcodeId = qridMatch ? parseInt(qridMatch[1]) : 0;
+          const qrcodeIdMatch = input.match(/qrcodeId=(\d+)/);
+          qrcodeId = qrcodeIdMatch ? parseInt(qrcodeIdMatch[1]) : 0;
         }
       } else {
         // 如果不是URL格式，直接尝试转换为数字
@@ -137,12 +138,13 @@ const Scanner = () => {
         setManualInput('');
         showSuccess('提交成功！');
       } else {
+        setManualInput('');
         showError(response.data.message || '提交失败，请重试');
       }
       
     } catch (error) {
       console.error('提交失败:', error);
-      showError('提交失败，请检查网络连接或稍后重试');
+      showError(`提交失败，请检查网络连接或稍后重试${JSON.stringify(error)}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -186,18 +188,47 @@ const Scanner = () => {
           <div className="card-body">
             <div className="input-group">
               <input
-                // defaultValue={'http://175.24.15.119:91/qrcode?qrid=7&qrcode=7WTN0'}
+                // defaultValue={'http://175.24.15.119:91/qrcode?qrcodeId=7&qrcode=7WTN0'}
                 ref={inputRef}
                 type="text"
                 className="form-input"
                 value={manualInput}
-                onChange={(e) => setManualInput(e.target.value)}
+                onChange={(e) => {
+                  const inputValue = e.target.value;
+                  setManualInput(inputValue);
+                  
+                  // 检查输入内容是否符合指定的URL格式
+                  const isValidQRCodeUrl = (url) => {
+                    try {
+                      const urlObj = new URL(url);
+                      const params = new URLSearchParams(urlObj.search);
+                      const qrcodeId = params.get('qrcodeId');
+                      const qrcode = params.get('qrcode');
+                      
+                      // 检查是否包含qrcodeId和qrcode参数，且qrcode长度>=5
+                      return qrcodeId && qrcode && qrcode.length >= 5;
+                    } catch {
+                      return false;
+                    }
+                  };
+                  
+                  // 如果输入内容符合格式，自动触发提交
+                  if (isValidQRCodeUrl(inputValue) && !isSubmitting) {
+                    console.log('检测到有效的二维码URL，自动提交:', inputValue);
+                    // 使用setTimeout确保状态更新完成后再触发提交
+                    setTimeout(() => {
+                      handleManualSubmit(inputValue);
+
+                    }, 100);
+                  }
+                }}
                 placeholder="请输入二维码内容或产品编号"
                 disabled={isSubmitting}
               />
               <button 
                 className="btn btn-secondary"
-                onClick={handleManualSubmit}
+                onClick={handleManualSubmit.bind(this,manualInput)}
+
                 disabled={isSubmitting}
               >
                 {isSubmitting ? '提交中...' : '确认输入'}

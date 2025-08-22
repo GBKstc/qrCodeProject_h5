@@ -15,7 +15,7 @@ const ProcessSelection = () => {
   const [dataLoading, setDataLoading] = useState(true);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-  const { showSuccess, showError, showWarning, showInfo, ToastContainer } = useToast();
+  // const { showSuccess, showError, showWarning, showInfo, ToastContainer } = useToast();
 
   // 数据状态
   const [options, setOptions] = useState({
@@ -46,10 +46,10 @@ const ProcessSelection = () => {
         }));
         
         console.log('工序数据加载成功:', processes);
-        showSuccess('工序数据加载成功');
+        // showSuccess('工序数据加载成功');
       } else {
         console.error('工序数据格式错误:', response.data);
-        showWarning('工序数据格式异常，使用默认数据');
+        // showWarning('工序数据格式异常，使用默认数据');
         // 使用默认数据
         setOptions(prev => ({
           ...prev,
@@ -64,7 +64,7 @@ const ProcessSelection = () => {
       }
     } catch (error) {
       console.error('加载工序数据失败:', error);
-      showError('加载工序数据失败，使用默认数据');
+      // showError('加载工序数据失败，使用默认数据');
       // 使用默认数据作为备选
       setOptions(prev => ({
         ...prev,
@@ -104,10 +104,10 @@ const ProcessSelection = () => {
         }));
         
         console.log('设备数据加载成功:', devices);
-        showSuccess('设备数据加载成功');
+        // showSuccess('设备数据加载成功');
       } else {
         console.error('设备数据格式错误:', response.data);
-        showWarning('设备数据格式异常，使用默认数据');
+        // showWarning('设备数据格式异常，使用默认数据');
         // 使用默认数据
         setOptions(prev => ({
           ...prev,
@@ -122,7 +122,7 @@ const ProcessSelection = () => {
       }
     } catch (error) {
       console.error('加载设备数据失败:', error);
-      showError('加载设备数据失败，使用默认数据');
+      // showError('加载设备数据失败，使用默认数据');
       // 使用默认数据作为备选
       setOptions(prev => ({
         ...prev,
@@ -162,10 +162,10 @@ const ProcessSelection = () => {
         
         console.log('批次数据加载成功:', batches);
         console.log('完整产品数据:', productSizeData);
-        showSuccess('产品数据加载成功');
+        // showSuccess('产品数据加载成功');
       } else {
         console.error('产品数据格式错误:', response.data);
-        showWarning('产品数据格式异常，使用默认数据');
+        // showWarning('产品数据格式异常，使用默认数据');
         // 使用默认数据
         setOptions(prev => ({
           ...prev,
@@ -180,7 +180,7 @@ const ProcessSelection = () => {
       }
     } catch (error) {
       console.error('加载产品数据失败:', error);
-      showError('加载产品数据失败，使用默认数据');
+      // showError('加载产品数据失败，使用默认数据');
       // 使用默认数据作为备选
       setOptions(prev => ({
         ...prev,
@@ -206,7 +206,7 @@ const ProcessSelection = () => {
       ]);
     } finally {
       setDataLoading(false);
-      showSuccess('数据初始化完成');
+      // showSuccess('数据初始化完成');
     }
   };
 
@@ -223,12 +223,12 @@ const ProcessSelection = () => {
     // 全局错误捕获
     const handleGlobalError = (event) => {
       console.error('🔍 [调试] 全局JavaScript错误:', event.error);
-      showError('🔍 调试：检测到JavaScript错误 - ' + event.error?.message);
+      // showError('🔍 调试：检测到JavaScript错误 - ' + event.error?.message);
     };
     
     const handleUnhandledRejection = (event) => {
       console.error('🔍 [调试] 未处理的Promise拒绝:', event.reason);
-      showError('🔍 调试：检测到Promise错误 - ' + event.reason);
+      // showError('🔍 调试：检测到Promise错误 - ' + event.reason);
     };
     
     // 添加错误监听器
@@ -236,7 +236,7 @@ const ProcessSelection = () => {
     window.addEventListener('unhandledrejection', handleUnhandledRejection);
     
     // 测试Toast功能
-    showInfo('🔍 调试：页面环境检测完成');
+    // showInfo('🔍 调试：页面环境检测完成');
     
     // 恢复之前的选择（如果有的话）
     const savedData = localStorage.getItem('processSelectionData');
@@ -250,7 +250,7 @@ const ProcessSelection = () => {
     }
     
     // 加载所有数据
-    showInfo('正在初始化数据...');
+    // showInfo('正在初始化数据...');
     loadAllData();
     
     // 清理函数
@@ -320,13 +320,13 @@ const ProcessSelection = () => {
           batch: '',
           product: ''
         }));
-        showInfo('工序已选择，相关选项已重置');
+        // showInfo('工序已选择，相关选项已重置');
       } else {
         setFormData(prev => ({
           ...prev,
           [name]: value
         }));
-        showInfo('工序已选择');
+        // showInfo('工序已选择');
       }
     } else if (name === 'batch') {
       setFormData(prev => ({
@@ -334,7 +334,7 @@ const ProcessSelection = () => {
         [name]: value,
         product: ''
       }));
-      showInfo('产品已选择，批次选项已重置');
+      // showInfo('产品已选择，批次选项已重置');
     } else {
       setFormData(prev => ({
         ...prev,
@@ -368,7 +368,7 @@ const ProcessSelection = () => {
     // 显示验证错误提醒
     if (Object.keys(newErrors).length > 0) {
       const errorMessages = Object.values(newErrors);
-      showError(`表单验证失败：${errorMessages.join('，')}`);
+      // showError(`表单验证失败：${errorMessages.join('，')}`);
     }
     
     return Object.keys(newErrors).length === 0;
@@ -376,7 +376,7 @@ const ProcessSelection = () => {
 
   const handleSubmit = async () => {
     console.log('🔍 [调试] handleSubmit 方法被调用');
-    showInfo('🔍 调试：开始提交流程...');
+    // showInfo('🔍 调试：开始提交流程...');
     
     console.log('🔍 [调试] 当前表单数据:', formData);
     console.log('🔍 [调试] 当前选项数据:', options);
@@ -385,14 +385,14 @@ const ProcessSelection = () => {
     console.log('🔍 [调试] 开始验证表单...');
     if (!validateForm()) {
       console.log('🔍 [调试] 表单验证失败，停止提交');
-      showError('🔍 调试：表单验证失败');
+      // showError('🔍 调试：表单验证失败');
       return;
     }
     console.log('🔍 [调试] 表单验证通过');
-    showInfo('🔍 调试：表单验证通过');
+    // showInfo('🔍 调试：表单验证通过');
 
     setLoading(true);
-    showInfo('🔍 调试：正在提交数据...');
+    // showInfo('🔍 调试：正在提交数据...');
     
     try {
       console.log('🔍 [调试] 进入try块，开始构建选择数据');
@@ -454,14 +454,16 @@ const ProcessSelection = () => {
       
       console.log('🔍 [调试] 提交的选择数据:', selectionData);
       
-      showSuccess('🔍 调试：提交成功，正在跳转到扫码页面...');
+      // showSuccess('🔍 调试：提交成功，正在跳转到扫码页面...');
       console.log('🔍 [调试] 准备跳转到扫码页面...');
       
-      
+      // 跳转扫码页面
+
+      navigate('/scanner');
     } catch (error) {
       console.error('🔍 [调试] Submit failed:', error);
       console.error('🔍 [调试] 错误堆栈:', error.stack);
-      showError('🔍 调试：提交失败 - ' + error.message);
+      // showError('🔍 调试：提交失败 - ' + error.message);
     } finally {
       console.log('🔍 [调试] 设置loading为false');
       setLoading(false);
@@ -470,7 +472,7 @@ const ProcessSelection = () => {
 
   const handleLogout = () => {
     if (window.confirm('确定要退出登录吗？')) {
-      showInfo('正在退出登录...');
+      // showInfo('正在退出登录...');
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('username');
       localStorage.removeItem('loginTime');
@@ -524,7 +526,7 @@ const ProcessSelection = () => {
 
   return (
     <div className="page-container">
-      <ToastContainer />
+      {/* <ToastContainer /> */}
       <div className="page-header">
         <span>工序选择</span>
         <div className="header-actions">
@@ -646,7 +648,7 @@ const ProcessSelection = () => {
                     console.log('🔍 [调试] 点击事件对象:', e);
                     console.log('🔍 [调试] 按钮是否禁用:', loading);
                     console.log('🔍 [调试] 当前时间:', new Date().toISOString());
-                    showInfo('🔍 调试：检测到按钮点击事件');
+                    // showInfo('🔍 调试：检测到按钮点击事件');
                     
                     // 防止事件冒泡
                     e.preventDefault();
@@ -654,7 +656,7 @@ const ProcessSelection = () => {
                     
                     if (loading) {
                       console.log('🔍 [调试] 按钮处于loading状态，忽略点击');
-                      showWarning('🔍 调试：按钮处于加载状态，请等待');
+                      // showWarning('🔍 调试：按钮处于加载状态，请等待');
                       return;
                     }
                     
