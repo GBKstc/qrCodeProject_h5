@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { scanAPI } from '../services/api';
 import './ProductDetail.css';
+import headerImage from '../images/header.jpg';
+import bottomImage from '../images/bottom.png';
 
 const ProductDetail = () => {
   const [searchParams] = useSearchParams();
@@ -11,20 +13,20 @@ const ProductDetail = () => {
   const [productData, setProductData] = useState(null);
   const [showConfig, setShowConfig] = useState([]);
   
-  // 从URL参数获取qrcodeId
-  const qrcodeId = searchParams.get('qrcodeId');
+  // 从URL参数获取qrid
+  const qrid = searchParams.get('qrid');
   const qrcode = searchParams.get('qrcode');
 
 
   useEffect(() => {
-    if (!qrcodeId) {
-      setError('缺少必要参数 qrcodeId');
+    if (!qrid) {
+      setError('缺少必要参数 qrid');
       setLoading(false);
       return;
     }
 
     loadData();
-  }, [qrcodeId]);
+  }, [qrid]);
 
   const loadData = async () => {
     try {
@@ -33,7 +35,7 @@ const ProductDetail = () => {
       
       // 并行获取产品详情和展示配置
       const [productResponse, configResponse] = await Promise.all([
-        scanAPI.getByQrCode(parseInt(qrcodeId)),
+        scanAPI.getByQrCode(parseInt(qrid)),
         scanAPI.getShowConfig()
       ]);
       
@@ -109,7 +111,7 @@ const ProductDetail = () => {
     },
     // 'qrcodeCode': {
     //   label: '二维码编号',
-    //   getValue: (data) => data.qrcodeId,
+    //   getValue: (data) => data.qrid,
     //   render: (value) => value || '-'
     // },
     'shareProductTime': {
@@ -129,26 +131,7 @@ const ProductDetail = () => {
     }
   };
 
-  // 根据配置渲染字段
-  const renderConfiguredFields = () => {
-    if (!showConfig.length || !productData) return null;
 
-    return showConfig.map((config) => {
-      const fieldConfig = fieldMapping[config.code];
-      if (!fieldConfig) return null;
-
-      const value = fieldConfig.getValue(productData);
-      
-      return (
-        <div key={config.id} className="display-item">
-          <div className="display-label">{config.name}:</div>
-          <div className="display-value">
-            {fieldConfig.render(value)}
-          </div>
-        </div>
-      );
-    }).filter(Boolean);
-  };
 
   if (loading) {
     return (
@@ -183,162 +166,88 @@ const ProductDetail = () => {
 
   return (
     <div className="product-detail-container">
+      {/* 顶部图片 */}
+      <div className="header-image-container">
+        <img src={headerImage} alt="顶部图片" className="header-image" />
+      </div>
+      
       <div className="product-detail-content">
-        {/* 海报风格头部 */}
-        <div className="poster-header">
-          <div className="header-background">
-            <div className="header-overlay"></div>
-            <div className="header-content">
-              <button className="back-button" onClick={handleBack}>
-                <span className="back-icon">←</span>
-                <span>返回</span>
-              </button>
-              <div className="header-title">
-                <h1 className="main-title">产品详情</h1>
-                <div className="title-decoration"></div>
-              </div>
+        {/* 第一部分：顶部产品名称 */}
+        {productData && (
+          <div className="product-header">
+            <h1 className="product-name">{productData.productName || '未知产品'}</h1>
+          </div>
+        )}
+
+        {/* 第二部分：产品参数表格 */}
+        {productData && showConfig.length > 0 && (
+          <div className="product-params-section">
+            <h2 className="section-title">产品参数</h2>
+            <div className="params-table">
+              <table className="product-table">
+                <tbody>
+                  {showConfig.map((config) => {
+                    const fieldConfig = fieldMapping[config.code];
+                    if (!fieldConfig) return null;
+                    
+                    const value = fieldConfig.getValue(productData);
+                    const renderedValue = fieldConfig.render(value);
+                    
+                    return (
+                      <tr key={config.id} className="table-row">
+                        <td className="field-name">{config.name}</td>
+                        <td className="field-value">{renderedValue}</td>
+                      </tr>
+                    );
+                  }).filter(Boolean)}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* 第三部分：产品资料（产品图片） */}
+        {productData && productData.productThumb && (
+          <div className="product-materials-section">
+            <h2 className="section-title">产品资料</h2>
+            <div className="product-image-container">
+              <img 
+                src={productData.productThumb} 
+                alt="产品展示" 
+                className="product-image"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* 第四部分：联系我们 */}
+        <div className="contact-section">
+          <h2 className="section-title">联系我们</h2>
+          <div className="contact-info">
+            <div className="contact-item">
+              <span className="contact-label">地址：</span>
+              <span className="contact-value">大连经济技术开发区双D港辽河东路88号</span>
+            </div>
+            <div className="contact-item">
+              <span className="contact-label">电话：</span>
+              <span className="contact-value">86-411-82168888</span>
+            </div>
+            <div className="contact-item">
+              <span className="contact-label">邮件：</span>
+              <span className="contact-value">info@insulators.cn</span>
             </div>
           </div>
         </div>
 
-        {/* 海报风格产品展示区 */}
-        {productData && (
-          <div className="poster-hero-section">
-            <div className="hero-background">
-              <div className="hero-pattern"></div>
-              <div className="hero-content">
-                <div className="product-showcase">
-                  <div className="product-badge">PREMIUM</div>
-                  <h1 className="hero-product-name">{productData.productName || '未知产品'}</h1>
-                  <div className="product-tagline">正品保证 · 品质之选</div>
-                  
-                  <div className="qr-hero-section">
-                    <div className="qr-label-container">
-                      <span className="qr-label">追溯防伪码</span>
-                      <div className="qr-decoration"></div>
-                    </div>
-                    <div className="qr-code-display">
-                      <span className="qr-number">{qrcode}</span>
-                      <div className="qr-glow"></div>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* 产品缩略图海报展示 */}
-                {productData.productThumb && (
-                  <div className="hero-image-section">
-                    <div className="image-frame">
-                      <img 
-                        src={productData.productThumb} 
-                        alt="产品展示" 
-                        className="hero-product-image"
-                      />
-                      <div className="image-overlay">
-                        <span className="image-label">PRODUCT</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {productData && (
-          <div className="product-info">
-            {/* 海报风格信息展示区 */}
-            <div className="poster-info-section">
-              <div className="info-container">
-                <div className="section-title-container">
-                  <h2 className="section-title">产品信息</h2>
-                  <div className="title-underline"></div>
-                </div>
-                
-                <div className="info-cards-grid">
-                  {renderConfiguredFields().map((field, index) => (
-                    <div key={index} className="info-card">
-                      <div className="card-header">
-                        <div className="card-icon"></div>
-                        <span className="card-label">{field.props.children[0].props.children}</span>
-                      </div>
-                      <div className="card-content">
-                        <span className="card-value">{field.props.children[1].props.children}</span>
-                      </div>
-                      <div className="card-decoration"></div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* 海报风格生产记录区 */}
-            {productData.produceUserList && productData.produceUserList.length > 0 && (
-              <div className="poster-records-section">
-                <div className="records-container">
-                  <div className="records-header">
-                    <div className="records-title-container">
-                      <h2 className="records-title">生产记录</h2>
-                      <div className="records-subtitle">Production Records</div>
-                    </div>
-                    <div className="records-count">
-                      <span className="count-number">{productData.produceUserList.length}</span>
-                      <span className="count-label">条记录</span>
-                    </div>
-                  </div>
-                  
-                  <div className="records-timeline">
-                    {productData.produceUserList.map((user, index) => (
-                      <div key={user.id || index} className="timeline-item">
-                        <div className="timeline-marker">
-                          <div className="marker-dot"></div>
-                          <div className="marker-line"></div>
-                        </div>
-                        
-                        <div className="timeline-content">
-                          <div className="record-card">
-                            <div className="record-header">
-                              <div className="user-avatar">
-                                <span className="avatar-text">{(user.operateName || '未知操作员').charAt(0)}</span>
-                              </div>
-                              <div className="user-info">
-                                <h3 className="user-name">{user.operateName || '未知操作员'}</h3>
-                                <p className="user-id">ID: {user.operateId || '-'}</p>
-                              </div>
-                              <div className="process-badge">
-                                <span className="process-name">{user.productionProcessesName || '-'}</span>
-                              </div>
-                            </div>
-                            
-                            <div className="record-details">
-                              <div className="detail-row">
-                                <span className="detail-label">工序ID</span>
-                                <span className="detail-value">{user.productionProcessesId || '-'}</span>
-                              </div>
-                              <div className="detail-row">
-                                <span className="detail-label">创建时间</span>
-                                <span className="detail-value">{formatDateTime(user.createTime)}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* 备注信息 */}
-            {/* {productData.remark && (
-              <div className="info-section">
-                <h3>备注</h3>
-                <div className="remark-content">
-                  {productData.remark}
-                </div>
-              </div>
-            )} */}
-          </div>
-        )}
+        {/* 底部图片 */}
+        <div className="bottom-image-container">
+          <img src={bottomImage} alt="底部图片" className="bottom-image" />
+        </div>
+        
+        {/* 底部公司名称 */}
+        <div className="company-footer">
+          <p className="company-name">中国·大连电瓷集团股份有限公司</p>
+        </div>
       </div>
     </div>
   );

@@ -10,26 +10,26 @@ const QRCodeDetail = () => {
   const [error, setError] = useState('');
   const [qrData, setQrData] = useState(null);
   
-  // 从URL参数获取qrcodeId和qrcode
-  const qrcodeId = searchParams.get('qrcodeId');
+  // 从URL参数获取qrid和qrcode
+  const qrid = searchParams.get('qrid');
   const qrcode = searchParams.get('qrcode');
 
   useEffect(() => {
-    if (!qrcodeId) {
-      setError('缺少必要参数 qrcodeId');
+    if (!qrid) {
+      setError('缺少必要参数 qrid');
       setLoading(false);
       return;
     }
 
     loadQRCodeDetail();
-  }, [qrcodeId]);
+  }, [qrid]);
 
   const loadQRCodeDetail = async () => {
     try {
       setLoading(true);
       setError('');
       
-      const response = await qrcodeAPI.getDetail(qrcodeId);
+      const response = await qrcodeAPI.getDetail(qrid);
       // const response = {
       //   data:{
       //     "code": "",
@@ -89,9 +89,9 @@ const QRCodeDetail = () => {
       
       // 如果不是完整地址，则添加https://前缀
       const fullUrl = hasProtocol ? url : `https://${url}`;
-      //如果是 /product-detail 产品详情展示地址，需要跳转到产品详情页 参数qrcodeId 
+      //如果是 /product-detail 产品详情展示地址，需要跳转到产品详情页 参数qrid 
       if(fullUrl.indexOf('/product-detail') !== -1){
-        window.location.href = '/product-detail?qrcodeId=' + qrcodeId + '&qrcode=' + qrcode;
+        window.location.href = '/product-detail?qrid=' + qrid + '&qrcode=' + qrcode;
 
         return;
       }
@@ -146,7 +146,7 @@ const QRCodeDetail = () => {
             <h3>扫码信息</h3>
             <div className="param-item">
               <span className="param-label">二维码ID:</span>
-              <span className="param-value">{qrcodeId}</span>
+              <span className="param-value">{qrid}</span>
             </div>
             <div className="param-item">
               <span className="param-label">二维码内容:</span>

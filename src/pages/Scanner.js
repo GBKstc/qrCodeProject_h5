@@ -45,12 +45,63 @@ const Scanner = () => {
     }
   }, [navigate]);
 
-  // 自动获取焦点
+  // 自动获取焦点并保持焦点
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
-  }, []);
+    
+    // 定时器确保焦点保持
+    const focusInterval = setInterval(() => {
+      if (inputRef.current && document.activeElement !== inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 500); // 每500ms检查一次焦点
+    
+    // 监听blur事件，立即重新获取焦点
+    const handleBlur = () => {
+      setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
+      }, 10); // 短暂延迟后重新获取焦点
+    };
+    
+    if (inputRef.current) {
+      inputRef.current.addEventListener('blur', handleBlur);
+    }
+    
+    // 监听页面可见性变化，确保页面重新可见时获取焦点
+     const handleVisibilityChange = () => {
+       if (!document.hidden && inputRef.current) {
+         setTimeout(() => {
+           inputRef.current.focus();
+         }, 100);
+       }
+     };
+     
+     // 监听窗口焦点事件
+     const handleWindowFocus = () => {
+       if (inputRef.current) {
+         setTimeout(() => {
+           inputRef.current.focus();
+         }, 100);
+       }
+     };
+     
+     document.addEventListener('visibilitychange', handleVisibilityChange);
+     window.addEventListener('focus', handleWindowFocus);
+     
+     // 清理函数
+     return () => {
+       clearInterval(focusInterval);
+       if (inputRef.current) {
+         inputRef.current.removeEventListener('blur', handleBlur);
+       }
+       document.removeEventListener('visibilitychange', handleVisibilityChange);
+       window.removeEventListener('focus', handleWindowFocus);
+     };
+   }, []);
 
   // 监听键盘事件，支持左右键触发确认输入
   // useEffect(() => {
@@ -100,34 +151,34 @@ const Scanner = () => {
     
     setIsSubmitting(true);
     try {
-      // 解析URL中的qrcodeId参数
-      let qrcodeId = 0;
+      // 解析URL中的qrid参数
+      let qrid = 0;
       const input = inputValue.trim();
       
       // 检查是否是URL格式
-      if (input.includes('qrcodeId=')) {
+      if (input.includes('qrid=')) {
         try {
           const url = new URL(input);
-          const qrcodeIdParam = url.searchParams.get('qrcodeId');
-          qrcodeId = parseInt(qrcodeIdParam) || 0;
+          const qridParam = url.searchParams.get('qrid');
+          qrid = parseInt(qridParam) || 0;
         } catch (urlError) {
           // 如果URL解析失败，尝试正则表达式提取
-          const qrcodeIdMatch = input.match(/qrcodeId=(\d+)/);
-          qrcodeId = qrcodeIdMatch ? parseInt(qrcodeIdMatch[1]) : 0;
+          const qridMatch = input.match(/qrid=(\d+)/);
+          qrid = qridMatch ? parseInt(qridMatch[1]) : 0;
         }
       } else {
         // 如果不是URL格式，直接尝试转换为数字
-        qrcodeId = parseInt(input) || 0;
+        qrid = parseInt(input) || 0;
       }
       
       const requestData = {
         // deviceId: selectionData.device?.id || 0,
         productId: selectionData.product?.id || 0,
         productionProcessesId: selectionData.process?.id || 0,
-        qrcodeId: qrcodeId
+        qrcodeId: qrid
       };
       
-      console.log('解析的qrcodeId:', qrcodeId);
+      console.log('解析的qrid:', qrid);
       console.log('提交的请求数据:', requestData);
       
       const response = await scanAPI.take(requestData);
@@ -141,10 +192,9 @@ const Scanner = () => {
         setManualInput('');
         showError(response.data.message || '提交失败，请重试');
       }
-      
     } catch (error) {
       console.error('提交失败:', error);
-      showError(`提交失败，请检查网络连接或稍后重试${JSON.stringify(error)}`);
+      showError(`${JSON.stringify(error)||'提交失败，请检查网络连接或稍后重试'}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -188,13 +238,19 @@ const Scanner = () => {
           <div className="card-body">
             <div className="input-group">
               <input
-                // defaultValue={'http://175.24.15.119:91/qrcode?qrcodeId=7&qrcode=7WTN0'}
+                // defaultValue={'http://175.24.15.119:91/qrcode?qrid=7&qrcode=7WTN0'}
                 ref={inputRef}
                 type="text"
                 className="form-input"
                 value={manualInput}
+                autoFocus
+                onFocus={() => {
+                  // 确保焦点事件被正确处理
+                  console.log('输入框获得焦点');
+                }}
                 onChange={(e) => {
                   const inputValue = e.target.value;
+                  console.log('输入框内容变化:', inputValue);
                   setManualInput(inputValue);
                   
                   // 检查输入内容是否符合指定的URL格式
@@ -202,11 +258,11 @@ const Scanner = () => {
                     try {
                       const urlObj = new URL(url);
                       const params = new URLSearchParams(urlObj.search);
-                      const qrcodeId = params.get('qrcodeId');
+                      const qrid = params.get('qrid');
                       const qrcode = params.get('qrcode');
                       
-                      // 检查是否包含qrcodeId和qrcode参数，且qrcode长度>=5
-                      return qrcodeId && qrcode && qrcode.length >= 5;
+                      // 检查是否包含qrid和qrcode参数，且qrcode长度>=5
+                      return qrid && qrcode && qrcode.length >= 5;
                     } catch {
                       return false;
                     }
